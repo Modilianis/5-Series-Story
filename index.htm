@@ -27,10 +27,10 @@
             renderer = new THREE.WebGLRenderer({ alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
-            camera.position.set(0, 1, 3); // По-близка камера
+            camera.position.set(0, 2, 5); // Камерата е малко по-високо и по-далеч
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 2); // По-силна светлина
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 3); // По-силна светлина
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
             directionalLight.position.set(2, 2, 5);
             scene.add(ambientLight);
             scene.add(directionalLight);
@@ -58,7 +58,7 @@
                 .then(response => {
                     if (!response.ok) {
                         console.warn('Model not found, using backup model');
-                        return 'https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf';
+                        return 'https://modelviewer.dev/shared-assets/models/Astronaut.glb';
                     }
                     return modelURL;
                 })
@@ -66,10 +66,11 @@
                     loader.load(finalURL, function (gltf) {
                         if (currentModel) scene.remove(currentModel);
                         currentModel = gltf.scene;
-                        currentModel.scale.set(1.5, 1.5, 1.5); // Увеличен мащаб
+                        currentModel.scale.set(3, 3, 3); // Увеличен мащаб, за да се вижда
                         currentModel.position.set(0, 0, 0); // Центриране на обекта
                         scene.add(currentModel);
                         console.log('Model loaded successfully:', finalURL);
+                        console.log('Model position:', currentModel.position);
                     }, undefined, function (error) {
                         console.error('Error loading model:', error);
                     });
