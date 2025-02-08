@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR 5 Series Cars</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@loaders.gl/gltf@3.0.11/dist/loaders.gl-gltf.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background: transparent; }
+        video { display: none; }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <video id="qr-video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <script>
+        let scene, camera, renderer;
+        let currentModel;
+        
+        function initAR() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            camera.position.z = 5;
+
+            const light = new THREE.AmbientLight(0xffffff, 1);
+            scene.add(light);
+
+            loadModel();
+            animate();
+        }
+        
+        function loadModel() {
+            const loader = new THREE.GLTFLoader();
+            loader.load('https://raw.githubusercontent.com/Modilianis/5-Series-Story/main/model1.glb', function (gltf) {
+                if (currentModel) scene.remove(currentModel);
+                currentModel = gltf.scene;
+                currentModel.scale.set(2, 2, 2);
+                scene.add(currentModel);
+            });
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            if (currentModel) currentModel.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        
+        function scanQR() {
+            const video = document.getElementById('qr-video');
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(stream => {
+                video.srcObject = stream;
+                video.play();
+            });
+        }
+        
+        scanQR();
+        initAR();
+    </script>
+</body>
+</html>
