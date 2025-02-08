@@ -29,8 +29,8 @@
             document.body.appendChild(renderer.domElement);
             camera.position.set(0, 2, 5); // Камерата е малко по-високо и по-далеч
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 3); // По-силна светлина
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 5); // Увеличена светлина
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
             directionalLight.position.set(2, 2, 5);
             scene.add(ambientLight);
             scene.add(directionalLight);
@@ -62,7 +62,7 @@
                 .then(response => {
                     if (!response.ok) {
                         console.warn('Model not found, using backup model');
-                        return 'https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf';
+                        return 'https://modelviewer.dev/shared-assets/models/Astronaut.glb';
                     }
                     return modelURL;
                 })
