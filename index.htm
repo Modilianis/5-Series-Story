@@ -38,8 +38,27 @@
             const axesHelper = new THREE.AxesHelper(5);
             scene.add(axesHelper);
             
-            loadModel("bmw"); // Зареждане на първия модел по подразбиране
+            checkModelExists().then(exists => {
+                if (exists) {
+                    loadModel("bmw"); // Зареждане на първия модел по подразбиране
+                } else {
+                    console.warn('⚠ Main model not found, switching to backup');
+                    loadBackupModel();
+                }
+            });
+            
             animate();
+        }
+        
+        async function checkModelExists() {
+            const modelURL = 'https://raw.githubusercontent.com/Modilianis/5-Series-Story/main/FabConvert.com_bmw%20e39%20m5.gltf';
+            try {
+                const response = await fetch(modelURL, { method: 'HEAD' });
+                return response.ok;
+            } catch (error) {
+                console.error('❌ Error checking model URL:', error);
+                return false;
+            }
         }
         
         function loadModel(modelName) {
@@ -48,10 +67,12 @@
             let modelURL;
             
             if (modelName === "bmw") {
-                modelURL = 'https://raw.githubusercontent.com/Modilianis/5-Series-Story/main/models/FabConvert.com_bmw%20e39%20m5.gltf';
+                modelURL = 'https://raw.githubusercontent.com/Modilianis/5-Series-Story/main/FabConvert.com_bmw%20e39%20m5.gltf';
             } else {
-                modelURL = 'https://raw.githubusercontent.com/Modilianis/5-Series-Story/main/models/result.gltf';
+                modelURL = 'https://raw.githubusercontent.com/Modilianis/5-Series-Story/main/result.gltf';
             }
+            
+            console.log('🔗 Model URL:', modelURL);
             
             loader.load(
                 modelURL,
@@ -59,8 +80,8 @@
                     console.log('✅ Model loaded successfully:', modelURL);
                     if (currentModel) scene.remove(currentModel);
                     currentModel = gltf.scene;
-                    currentModel.scale.set(5, 5, 5);
-                    currentModel.position.set(0, 1, 0);
+                    currentModel.scale.set(10, 10, 10); // Увеличавам мащаба, ако моделът е малък
+                    currentModel.position.set(0, 1, 0); // Позиционирам над мрежата
                     scene.add(currentModel);
                 },
                 function (xhr) {
@@ -68,6 +89,30 @@
                 },
                 function (error) {
                     console.error('❌ Error loading model:', error);
+                }
+            );
+        }
+        
+        function loadBackupModel() {
+            console.log('🔄 Loading backup model...');
+            const loader = new THREE.GLTFLoader();
+            const backupModelURL = 'https://modelviewer.dev/shared-assets/models/Astronaut.glb';
+            
+            loader.load(
+                backupModelURL,
+                function (gltf) {
+                    console.log('✅ Backup model loaded successfully:', backupModelURL);
+                    if (currentModel) scene.remove(currentModel);
+                    currentModel = gltf.scene;
+                    currentModel.scale.set(3, 3, 3);
+                    currentModel.position.set(0, 1, 0);
+                    scene.add(currentModel);
+                },
+                function (xhr) {
+                    console.log(`📡 Backup model loading: ${(xhr.loaded / xhr.total * 100).toFixed(2)}%`);
+                },
+                function (error) {
+                    console.error('❌ Error loading backup model:', error);
                 }
             );
         }
