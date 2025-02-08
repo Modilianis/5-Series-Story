@@ -36,14 +36,14 @@
         }
         
         function loadModel() {
-            const loader = new THREE.GLTFLoader();
-            loader.load('https://raw.githubusercontent.com/Modilianis/5-Series-Story/main/model1.glb', function (gltf) {
-                if (currentModel) scene.remove(currentModel);
-                currentModel = gltf.scene;
-                currentModel.scale.set(2, 2, 2);
-                scene.add(currentModel);
-            });
-        }
+    const loader = new THREE.GLTFLoader();
+    loader.load('https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf', function (gltf) {
+        if (currentModel) scene.remove(currentModel);
+        currentModel = gltf.scene;
+        currentModel.scale.set(2, 2, 2);
+        scene.add(currentModel);
+    });
+}
         
         function animate() {
             requestAnimationFrame(animate);
