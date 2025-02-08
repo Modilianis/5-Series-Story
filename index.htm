@@ -39,6 +39,10 @@
             const gridHelper = new THREE.GridHelper(10, 10);
             scene.add(gridHelper);
             
+            // Добавяме Axes Helper (X = червено, Y = зелено, Z = синьо)
+            const axesHelper = new THREE.AxesHelper(5);
+            scene.add(axesHelper);
+            
             // Добавяме основна равнина за референция
             const planeGeometry = new THREE.PlaneGeometry(10, 10);
             const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x808080, side: THREE.DoubleSide });
@@ -58,7 +62,7 @@
                 .then(response => {
                     if (!response.ok) {
                         console.warn('Model not found, using backup model');
-                        return 'https://modelviewer.dev/shared-assets/models/Astronaut.glb';
+                        return 'https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf';
                     }
                     return modelURL;
                 })
@@ -69,13 +73,13 @@
                         currentModel.scale.set(3, 3, 3); // Увеличен мащаб, за да се вижда
                         currentModel.position.set(0, 0, 0); // Центриране на обекта
                         scene.add(currentModel);
-                        console.log('Model loaded successfully:', finalURL);
-                        console.log('Model position:', currentModel.position);
+                        console.log('✅ Model loaded successfully:', finalURL);
+                        console.log('📍 Model position:', currentModel.position);
                     }, undefined, function (error) {
-                        console.error('Error loading model:', error);
+                        console.error('❌ Error loading model:', error);
                     });
                 })
-                .catch(error => console.error('Fetch error:', error));
+                .catch(error => console.error('❌ Fetch error:', error));
         }
         
         function animate() {
