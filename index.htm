@@ -21,9 +21,9 @@
             console.log('🔄 Initializing AR...');
             scene = new THREE.Scene();
             
-            // Добавяме фонова светлина и сенки
-            const ambientLight = new THREE.AmbientLight(0xffffff, 2);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 4);
+            // Добавяме по-силно осветление за по-добър контраст
+            const ambientLight = new THREE.AmbientLight(0xffffff, 4);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 6);
             directionalLight.position.set(5, 5, 5);
             directionalLight.castShadow = true;
             scene.add(ambientLight);
@@ -34,14 +34,14 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
             document.body.appendChild(renderer.domElement);
-            camera.position.set(0, 2, 5);
+            camera.position.set(0, 2, 8);
 
-            loadModel("bmw-e39"); // По подразбиране зареждаме BMW E39
+            loadModel("bmw-e39");
             animate();
         }
         
         function loadModel(modelName) {
-            console.log(`🔍 Loading model: ${modelName}`);
+            console.log(`🔍 Attempting to load model: ${modelName}`);
             const loader = new THREE.GLTFLoader();
             let modelURL;
             
@@ -61,23 +61,29 @@
                     console.log('✅ Model loaded successfully:', modelURL);
                     if (currentModel) scene.remove(currentModel);
                     
+                    if (!gltf.scene) {
+                        console.error('❌ Model does not contain a valid scene');
+                        loadBackupModel();
+                        return;
+                    }
+                    
                     currentModel = gltf.scene;
                     currentModel.traverse((node) => {
                         if (node.isMesh) {
                             node.castShadow = true;
                             node.receiveShadow = true;
                             if (!node.material.map) {
-                                node.material = new THREE.MeshStandardMaterial({ color: 0x888888 });
+                                node.material = new THREE.MeshStandardMaterial({ color: 0x666666, metalness: 0.8, roughness: 0.2 });
                             }
                         }
                     });
                     
                     currentModel.scale.set(10, 10, 10);
-                    currentModel.position.set(0, 0, 0);
+                    currentModel.position.set(0, -1, 0);
                     scene.add(currentModel);
                 },
                 function (xhr) {
-                    console.log(`📡 Loading progress: ${((xhr.loaded / xhr.total) * 100).toFixed(2)}%`);
+                    console.log(`📡 Model loading progress: ${((xhr.loaded / xhr.total) * 100).toFixed(2)}%`);
                 },
                 function (error) {
                     console.error('❌ Error loading model:', error);
@@ -98,12 +104,17 @@
                     console.log('✅ Backup model loaded successfully:', backupModelURL);
                     if (currentModel) scene.remove(currentModel);
                     
+                    if (!gltf.scene) {
+                        console.error('❌ Backup model does not contain a valid scene');
+                        return;
+                    }
+                    
                     currentModel = gltf.scene;
                     currentModel.traverse((node) => {
                         if (node.isMesh) {
                             node.castShadow = true;
                             node.receiveShadow = true;
-                            node.material = new THREE.MeshStandardMaterial({ color: 0x888888 });
+                            node.material = new THREE.MeshStandardMaterial({ color: 0x777777, metalness: 0.8, roughness: 0.2 });
                         }
                     });
                     
