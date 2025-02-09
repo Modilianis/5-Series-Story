@@ -67,7 +67,9 @@
                     currentModel.position.set(0, 1, 0);
                     scene.add(currentModel);
                 },
-                undefined,
+                function (xhr) {
+                    console.log(`📡 Loading progress: ${((xhr.loaded / xhr.total) * 100).toFixed(2)}%`);
+                },
                 function (error) {
                     console.error('❌ Error loading model:', error);
                     console.warn('⚠ Switching to backup model');
@@ -91,7 +93,9 @@
                     currentModel.position.set(0, 1, 0);
                     scene.add(currentModel);
                 },
-                undefined,
+                function (xhr) {
+                    console.log(`📡 Backup model loading progress: ${((xhr.loaded / xhr.total) * 100).toFixed(2)}%`);
+                },
                 function (error) {
                     console.error('❌ Error loading backup model:', error);
                 }
