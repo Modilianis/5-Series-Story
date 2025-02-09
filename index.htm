@@ -20,24 +20,22 @@
         function initAR() {
             console.log('🔄 Initializing AR...');
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
-            camera.position.set(0, 2, 5);
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 5);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
-            directionalLight.position.set(2, 2, 5);
+            
+            // Добавяме фонова светлина и сенки
+            const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 4);
+            directionalLight.position.set(5, 5, 5);
+            directionalLight.castShadow = true;
             scene.add(ambientLight);
             scene.add(directionalLight);
             
-            const gridHelper = new THREE.GridHelper(10, 10);
-            scene.add(gridHelper);
-            
-            const axesHelper = new THREE.AxesHelper(5);
-            scene.add(axesHelper);
-            
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+            camera.position.set(0, 2, 5);
+
             loadModel("bmw-e39"); // По подразбиране зареждаме BMW E39
             animate();
         }
@@ -62,9 +60,20 @@
                 function (gltf) {
                     console.log('✅ Model loaded successfully:', modelURL);
                     if (currentModel) scene.remove(currentModel);
+                    
                     currentModel = gltf.scene;
+                    currentModel.traverse((node) => {
+                        if (node.isMesh) {
+                            node.castShadow = true;
+                            node.receiveShadow = true;
+                            if (!node.material.map) {
+                                node.material = new THREE.MeshStandardMaterial({ color: 0x888888 });
+                            }
+                        }
+                    });
+                    
                     currentModel.scale.set(10, 10, 10);
-                    currentModel.position.set(0, 1, 0);
+                    currentModel.position.set(0, 0, 0);
                     scene.add(currentModel);
                 },
                 function (xhr) {
@@ -88,9 +97,18 @@
                 function (gltf) {
                     console.log('✅ Backup model loaded successfully:', backupModelURL);
                     if (currentModel) scene.remove(currentModel);
+                    
                     currentModel = gltf.scene;
+                    currentModel.traverse((node) => {
+                        if (node.isMesh) {
+                            node.castShadow = true;
+                            node.receiveShadow = true;
+                            node.material = new THREE.MeshStandardMaterial({ color: 0x888888 });
+                        }
+                    });
+                    
                     currentModel.scale.set(3, 3, 3);
-                    currentModel.position.set(0, 1, 0);
+                    currentModel.position.set(0, 0, 0);
                     scene.add(currentModel);
                 },
                 function (xhr) {
